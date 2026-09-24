@@ -84,11 +84,8 @@ class Tenant(BaseModel):
     tenant_id : int
 
 
-@app.get("/")
-def home(user : user_dependency, db : db_dependency):
-    if user is None:
-        raise HTTPException(status_code=401, detail='Failed Authentication')
-   
+@app.get("/rooms")
+def home(db: db_dependency):
     rooms = db.query(Rooms).all()
     return rooms
 
