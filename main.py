@@ -150,6 +150,22 @@ def EditMyRoom(user : user_dependency, db : db_dependency, room_id : int, Update
     return JSONResponse(status_code=200, content={'message':'Room info updated successfully'})
 
 
+
+@app.get('/edit/my/room/{room_id}')
+def DetailsMyRoom(user : user_dependency, db : db_dependency, room_id : int):
+    if user is None or user.get('role') != 'owner':
+        raise HTTPException(status_code=401, detail='Failed Authetication')
+    
+    room = db.query(Rooms).filter(Rooms.id == room_id).first()
+    
+    if room is None:
+        raise HTTPException(status_code=404, detail='Room not found')
+    
+   
+    return room
+    
+
+
 @app.delete('/delete/my/room/{room_id}')
 def DeleteMyRoom(user : user_dependency, db : db_dependency, room_id : int):
     if user is None or user.get('role') != 'owner':
