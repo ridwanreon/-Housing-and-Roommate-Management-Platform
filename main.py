@@ -27,7 +27,7 @@ origins = [
     "http://127.0.0.1:3000",
 
     # Netlify Frontend
-    "https://verdant-basbousa-2800db.netlify.app"
+    "https://imaginative-salamander-19e46b.netlify.app"
 ]
 
 
