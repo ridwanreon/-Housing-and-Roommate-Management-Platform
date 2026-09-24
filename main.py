@@ -150,7 +150,7 @@ def EditMyRoom(user : user_dependency, db : db_dependency, room_id : int, Update
 
 @app.get('/edit/my/room/{room_id}')
 def DetailsMyRoom(user : user_dependency, db : db_dependency, room_id : int):
-    if user is None or user.get('role') != 'owner':
+    if user is None:
         raise HTTPException(status_code=401, detail='Failed Authetication')
     
     room = db.query(Rooms).filter(Rooms.id == room_id).first()
