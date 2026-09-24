@@ -241,26 +241,30 @@ def RentalRequest(user : user_dependency, db : db_dependency, room_id : int):
 
 
 
-@app.post('/cancel/rental/request/{room_id}')
-def CancelRentalRequest(user : user_dependency, db : db_dependency, room_id : int):
-    
+@app.put('/cancel/rental/request/{room_id}')
+def CancelRentalRequest(user: user_dependency, db: db_dependency, room_id: int):
+
     if user is None or user.get('role') != 'tenant':
         raise HTTPException(status_code=401, detail='Failed Authetication')
-    
-    roomId = db.query(Rooms).filter(Rooms.id == room_id).all()
+
+    roomId = db.query(Rooms).filter(Rooms.id == room_id).first()
+
     if roomId is None:
         raise HTTPException(status_code=404, detail='Room not found')
-    
-    
-    
 
-    
-       
-    tenantModel = RentalRequests(
-        status = 'cancel'
-    )
-    
-    db.add(tenantModel)
+    rentalreq = db.query(RentalRequests).filter(
+        RentalRequests.room_id == room_id,
+        RentalRequests.tenant_id == user.get('user_id')
+    ).all()
+
+    if rentalreq is None:
+        raise HTTPException(status_code=404, detail='Rental request not found')
+
+    rentalreq.status = 'cancelled'
+
     db.commit()
-    
-    return JSONResponse(status_code=201, content={'message':'Successfully requested'})
+
+    return JSONResponse(
+        status_code=200,
+        content={'message': 'Successfully cancelled'}
+    )
