@@ -214,25 +214,24 @@ def AcceptTenantReq(user: user_dependency, db: db_dependency,request_id: int):
 # Varatiya #
 #===========
 
-@app.post('/rental/request')
-def RentalRequest(user : user_dependency, db : db_dependency, TenantData : Tenant):
+@app.post('/rental/request/{room_id}')
+def RentalRequest(user : user_dependency, db : db_dependency, room_id : int):
     
     if user is None or user.get('role') != 'tenant':
         raise HTTPException(status_code=401, detail='Failed Authetication')
     
-    roomId = db.query(Rooms).filter(Rooms.id == TenantData.room_id).first()
+    roomId = db.query(Rooms).filter(Rooms.id == room_id).first()
     if roomId is None:
         raise HTTPException(status_code=404, detail='Room not found')
     
     
     
-    if TenantData.tenant_id != user.get('user_id'):
-        raise HTTPException(status_code=404, detail='Tenant id not match') 
+
     
        
     tenantModel = RentalRequests(
-        room_id = TenantData.room_id,
-        tenant_id = TenantData.tenant_id
+        room_id =room_id,
+        tenant_id = user.get('user_id')
     )
     
     db.add(tenantModel)
