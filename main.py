@@ -255,7 +255,7 @@ def CancelRentalRequest(user: user_dependency, db: db_dependency, room_id: int):
     rentalreq = db.query(RentalRequests).filter(
         RentalRequests.room_id == room_id,
         RentalRequests.tenant_id == user.get('user_id')
-    ).all()
+    ).first()
 
     if rentalreq is None:
         raise HTTPException(status_code=404, detail='Rental request not found')
